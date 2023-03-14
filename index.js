@@ -1,16 +1,51 @@
-const express=require("express");
-const app=express();
-const path=require("path");
+const express= require('express');
 
-app.use('/css',express.static(path.join(__dirname,'node_modules/bootstrap/dist/css')))
-app.use('/js',express.static(path.join(__dirname,'node_modules/bootstrap/dist/js')))
-app.use(express.static("public"));
+const app= express();
 
+var mongoose = require('mongoose');
 
-app.get("/",function(req,res){
-    res.sendFile(path.join(__dirname,'index.html'))
+const port = 3000;
+
+var db = require("./config/db");
+
+console.log("connecting--" ,db);
+mongoose.connect(db.url);
+app.get('/',function(req,res){
+    res.send("Welcome Ananya!!!")
 })
+app.get('/tproute',function(req,res){
+    res.send("This is routing for the application developed using Node and Express")
+});
 
-app.listen(3000,function(req,res){
-    console.log("Server is running on port 3000")
-})
+    var Student = require ('./app/models/students');
+    
+
+    app.get('/api/students',function(req,res){
+        Student.find().then(function(err,students) {
+            if(err)
+            res.send(err);
+
+            res.json(students);
+        });
+    });
+
+
+    app.post('/api/students/send', function(req, res){
+        var student = new Student();
+        student.name= req.body.name;
+        student.save(function(err){
+        if(err)
+            res.send(err);
+
+            res.json(students);
+        });
+    });
+
+
+
+
+
+
+    app.listen(port,function(req,res){
+        console.log("The app is running on port 3000")
+    });
